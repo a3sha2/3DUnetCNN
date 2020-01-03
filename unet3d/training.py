@@ -8,7 +8,9 @@ from keras.models import load_model
 from unet3d.metrics import (dice_coefficient, dice_coefficient_loss, dice_coef, dice_coef_loss,
                             weighted_dice_coefficient_loss, weighted_dice_coefficient)
 
-K.set_image_dim_ordering('th')
+#K.set_image_dim_ordering('th')
+K.common.image_dim_ordering()
+K.clear_session()
 
 
 # learning rate schedule
@@ -77,7 +79,7 @@ def train_model(model, model_file, training_generator, validation_generator, ste
     """
     model.fit_generator(generator=training_generator,
                         steps_per_epoch=steps_per_epoch,
-                        epochs=n_epochs,
+                        epochs=n_epochs,workers=0,
                         validation_data=validation_generator,
                         validation_steps=validation_steps,
                         callbacks=get_callbacks(model_file,

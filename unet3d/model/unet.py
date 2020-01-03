@@ -3,7 +3,7 @@ from keras import backend as K
 from keras.engine import Input, Model
 from keras.layers import Conv3D, MaxPooling3D, UpSampling3D, Activation, BatchNormalization, PReLU, Deconvolution3D
 from keras.optimizers import Adam
-
+from keras_contrib.layers.normalization.instancenormalization import InstanceNormalization
 from unet3d.metrics import dice_coefficient_loss, get_label_dice_coefficient_function, dice_coefficient
 
 K.set_image_data_format("channels_first")
@@ -99,12 +99,13 @@ def create_convolution_block(input_layer, n_filters, batch_normalization=False, 
     if batch_normalization:
         layer = BatchNormalization(axis=1)(layer)
     elif instance_normalization:
-        try:
-            from keras_contrib.layers.normalization import InstanceNormalization
-        except ImportError:
-            raise ImportError("Install keras_contrib in order to use instance normalization."
-                              "\nTry: pip install git+https://www.github.com/farizrahman4u/keras-contrib.git")
-        layer = InstanceNormalization(axis=1)(layer)
+        layer =InstanceNormalization(axis=1)(layer)
+        #try:
+            #from keras_contrib.layers.normalization import instancenormalization
+        #except ImportError:
+            #raise ImportError("Install keras_contrib in order to use instance normalization."
+                              #"\nTry: pip install git+https://www.github.com/farizrahman4u/keras-contrib.git")
+        #layer = instancenormalization(axis=1)(layer)
     if activation is None:
         return Activation('relu')(layer)
     else:
